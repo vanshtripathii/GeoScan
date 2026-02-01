@@ -1,0 +1,283 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Topographic map overlay effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(255,255,255,0.03) 50px, rgba(255,255,255,0.03) 51px),
+        repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.03) 50px, rgba(255,255,255,0.03) 51px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    border: 2px solid rgba(46, 125, 50, 0.3);
+}
+
+h1 {
+    text-align: center;
+    color: #1b5e20;
+    margin-bottom: 35px;
+    font-size: 2.2em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid #2e7d32;
+    padding-bottom: 15px;
+    position: relative;
+}
+
+h1::before {
+    content: '';
+    margin-right: 15px;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #4caf50, transparent);
+}
+
+.upload-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 35px;
+}
+
+.upload-box {
+    background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+    border: 3px dashed #558b2f;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(76, 175, 80, 0.05) 10px,
+        rgba(76, 175, 80, 0.05) 20px
+    );
+    pointer-events: none;
+}
+
+.upload-box:hover {
+    border-color: #33691e;
+    background: linear-gradient(135deg, #dcedc8 0%, #c5e1a5 100%);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(46, 125, 50, 0.2);
+}
+
+.upload-box h3 {
+    color: #33691e;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 20px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    background: #2e7d32;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    background: #1b5e20;
+}
+
+input[type="file"]:hover {
+    background: #45a049;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+    margin-top: 15px;
+    border: 2px solid #7cb342;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: block;
+}
+
+#detectBtn {
+    display: block;
+    margin: 0 auto 40px;
+    padding: 18px 60px;
+    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+#detectBtn::before {
+    content: '📡';
+    margin-right: 10px;
+}
+
+#detectBtn:hover {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(46, 125, 50, 0.5);
+}
+
+#detectBtn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
+}
+
+.results {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border: 2px solid #81c784;
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 30px;
+    position: relative;
+}
+
+.results::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2e7d32, #4caf50, #81c784, #4caf50, #2e7d32);
+    border-radius: 10px 10px 0 0;
+}
+
+.results h3 {
+    color: #1b5e20;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+#changePercentage {
+    text-align: center;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2e7d32;
+    margin: 20px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border-left: 6px solid #4caf50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#resultCanvas {
+    display: block;
+    margin: 25px auto 0;
+    max-width: 100%;
+    border: 3px solid #4caf50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Coordinate grid decoration */
+.container::after {
+    content: '0°N 0°E';
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.75em;
+    color: #7cb342;
+    font-family: 'Courier New', monospace;
+    opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    .upload-section {
+        grid-template-columns: 1fr;
+    }
+    
+    #detectBtn {
+        padding: 15px 40px;
+        font-size: 1em;
+    }
+}

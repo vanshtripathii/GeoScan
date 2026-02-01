@@ -1,0 +1,20 @@
+# Core ML - Use compatible versions
+tensorflow>=2.10.0
+# OR for CPU only: tensorflow-cpu>=2.10.0
+
+# Image processing
+opencv-python
+pillow
+rasterio
+scikit-image
+scikit-learn
+
+# Web framework
+flask
+flask-cors
+
+# Utilities
+numpy
+matplotlib
+pandas
+tqdm

@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoScan AI - Satellite Intelligence Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #666666;
+            --accent-blue: #3b82f6;
+            --accent-blue-dark: #1e40af;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.8rem 0;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.4rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            background: transparent;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        /* HERO SECTION - FIXED SPACING */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            padding-top: 100px; /* Increased padding for navbar */
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .bg-grid {
+            background: 
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(180deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .herovideo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .bg-glow-1 {
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
+        }
+
+        .bg-glow-2 {
+            background: radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+        }
+
+        .bg-glow-3 {
+            background: radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            display: block;
+        }
+
+        .hero-text {
+            max-width: 100%;
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--accent-blue);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2.5rem; /* Increased spacing */
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 2rem; /* Increased spacing */
+            background: linear-gradient(135deg, #ffffff 0%, #93c5fd 30%, #60a5fa 70%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 3.5rem; /* Increased spacing */
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .cta-btn {
+            padding: 1.2rem 2.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+            color: white;
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 3.5rem; /* Increased spacing */
+        }
+
+        .stat-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Globe Visualization */
+        .globe-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .globe {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            box-shadow: 
+                inset 0 0 50px rgba(59, 130, 246, 0.3),
+                0 0 80px rgba(59, 130, 246, 0.2);
+            position: relative;
+        }
+
+        .globe-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .globe-point-1 { top: 30%; left: 40%; }
+        .globe-point-2 { 
+            top: 60%; 
+            left: 60%; 
+            background: var(--accent-purple);
+            box-shadow: 0 0 10px var(--accent-purple);
+        }
+        .globe-point-3 { 
+            top: 50%; 
+            left: 30%; 
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* Floating Data Points */
+        .data-point {
+            position: absolute;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            backdrop-filter: blur(10px);
+        }
+
+        .data-point-1 { top: 30%; right: 20%; }
+        .data-point-2 { top: 50%; left: 15%; }
+        .data-point-3 { bottom: 30%; right: 25%; }
+
+        /* Sections */
+        .section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        .section-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .section-alt {
+            background: var(--bg-secondary);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 4rem;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2.5rem 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-0.5rem);
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .feature-icon {
+            width: 4rem;
+            height: 4rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: '•';
+            color: var(--accent-blue);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Image Analysis Section Styles */
+        .image-analysis-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .image-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-area {
+            background: rgba(255, 255, 255, 0.01);
+            border: 2px dashed var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+            color: var(--accent-blue);
+        }
+
+        .upload-placeholder {
+            width: 100%;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .upload-placeholder img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .canvas-container {
+            width: 100%;
+            height: 250px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .canvas-container canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-label {
+            background: var(--accent-blue);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .upload-label:hover {
+            background: var(--accent-blue-dark);
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Map Sections */
+        .map-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .map-placeholder {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.75rem;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 48%, rgba(59, 130, 246, 0.1) 50%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, rgba(59, 130, 246, 0.05) 50%, transparent 52%);
+            background-size: 30px 30px;
+        }
+
+        .map-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .map-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+            color: var(--accent-blue);
+        }
+
+        .date-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .date-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        /* Technology Section */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .tech-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tech-demo {
+            width: 100%;
+            height: 300px;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-demo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+        }
+
+        .tech-features {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .tech-feature {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .tech-icon {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+            flex-shrink: 0;
+        }
+
+        .tech-content h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Blog Section */
+        .blog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            margin-bottom: 4rem;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        .blog-main {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .blog-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-0.25rem);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .blog-card-large {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .blog-date {
+            font-size: 0.875rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .blog-excerpt {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .blog-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+        }
+
+        .blog-link:hover {
+            gap: 0.75rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        /* Contact Section */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .contact-icon {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-tertiary);
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-description {
+            color: var(--text-secondary);
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+
+        .footer-heading {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+            
+            .hero-visual {
+                order: -1;
+            }
+            
+            .globe-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .globe {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero {
+                padding-top: 90px; /* Adjusted for tablet */
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .image-upload-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .data-point {
+                display: none;
+            }
+            
+            .globe-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .globe {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .hero {
+                padding-top: 80px; /* Adjusted for mobile */
+            }
+            
+            .hero-badge {
+                margin-bottom: 2rem;
+            }
+            
+            .hero-title {
+                margin-bottom: 1.5rem;
+            }
+            
+            .hero-subtitle {
+                margin-bottom: 2.5rem;
+            }
+            
+            .hero-stats {
+                padding-top: 2.5rem;
+            }
+            
+            .blog-main {
+                grid-template-columns: 1fr;
+            }
+            
+            .blog-card-large {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding-top: 70px; /* Further adjusted for small mobile */
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .cta-btn {
+                padding: 1rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .map-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .date-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-analysis-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">GeoScan</a>
+            
+            <ul class="nav-links">
+                <li><a href="#features">FEATURES</a></li>
+                <li><a href="#technology">TECHNOLOGY</a></li>
+                <li><a href="#map-analysis">MAP ANALYSIS</a></li>
+                <li><a href="#image-analysis">IMAGE ANALYSIS</a></li>
+                <li><a href="#blog">BLOG</a></li>
+                <li><a href="#contact">CONTACT</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <a href="#" class="btn btn-outline">Sign In</a>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Fixed Spacing -->
+    <section class="hero">
+        <div class="hero-bg bg-glow-1"></div>
+        <div class="hero-bg bg-glow-2"></div>
+        <div class="hero-bg bg-glow-3"></div>
+        
+        <!-- Hero Video -->
+        <video class="herovideo" autoplay muted loop playsinline>
+            <source src="media/globe.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-badge">
+                        <div class="badge-dot"></div>
+                        AI-Powered Satellite Intelligence
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        Monitor Global Development<br>
+                        With Satellite Intelligence
+                    </h1>
+                    
+                    <p class="hero-subtitle">
+                        Detect and visualize man-made changes anywhere on Earth using advanced DSM analysis 
+                        and AI-powered change detection. Transform satellite data into actionable insights.
+                    </p>
+                    
+                    <div class="hero-actions">
+                        <a href="#map-analysis" class="cta-btn cta-primary">
+                            <i class="fas fa-globe-americas"></i>
+                            Start Map Analysis
+                        </a>
+                        <a href="#image-analysis" class="cta-btn cta-secondary">
+                            <i class="fas fa-image"></i>
+                            Analyze Images
+                        </a>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">97%</div>
+                            <div class="stat-label">Detection Accuracy</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">Global</div>
+                            <div class="stat-label">Coverage</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Real-time Monitoring</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">AI</div>
+                            <div class="stat-label">Powered Analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <div class="section-bg" style="
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+        "></div>
+        <div class="container">
+            <h2 class="section-title">Advanced Analysis Platform</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3 class="feature-title">Global Map Analysis</h3>
+                    <p class="feature-description">
+                        Pinpoint any location worldwide and analyze man-made development changes over time using our advanced DSM model.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Custom date range selection (2018-2025)</li>
+                        <li>Area-specific development reports</li>
+                        <li>Building, road, and construction detection</li>
+                        <li>Interactive change visualization</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Regional Analysis</h3>
+                    <p class="feature-description">
+                        Click on available regions for detailed development analysis and interactive dashboards with sample datasets.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Clickable region markers</li>
+                        <li>Regional development insights</li>
+                        <li>Sample datasets preview</li>
+                        <li>Comparative analysis tools</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h3 class="feature-title">Image Analysis</h3>
+                    <p class="feature-description">
+                        Upload area images for automatic analysis and development detection using our AI models.
+                    </p>
+                    <ul class="feature-list">
+                        <li>PNG/JPEG to TIFF conversion</li>
+                        <li>Automated development scoring</li>
+                        <li>Detailed area analysis reports</li>
+                        <li>Change detection algorithms</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="section section-alt">
+        <div class="section-bg" style="
+            background: radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+        "></div>
+        <div class="container">
+            <h2 class="section-title">Advanced Technology</h2>
+            
+            <div class="tech-grid">
+                <div class="tech-visual">
+                    <div class="tech-demo">
+                        <i class="fas fa-brain" style="font-size: 4rem; color: var(--accent-blue); opacity: 0.7;"></i>
+                    </div>
+                </div>
+                
+                <div class="tech-features">
+                    <div class="tech-feature">
+                        <div class="tech-icon">
+                            <i class="fas fa-satellite"></i>
+                        </div>
+                        <div class="tech-content">
+                            <h4>Multi-Source Satellite Data</h4>
+                            <p>Integrate data from multiple satellite sources including Sentinel, Landsat, and commercial providers for comprehensive coverage.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-feature">
+                        <div class="tech-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="tech-content">
+                            <h4>AI-Powered Detection</h4>
+                            <p>Our advanced neural networks automatically identify and classify development changes with 99.2% accuracy.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-feature">
+                        <div class="tech-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="tech-content">
+                            <h4>Real-Time Processing</h4>
+                            <p>Process satellite imagery in near real-time to provide up-to-date insights on global development patterns.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Analysis Section -->
+    <section id="map-analysis" class="section">
+        <div class="section-bg" style="
+            background: radial-gradient(circle at 70% 30%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+        "></div>
+        <div class="container">
+            <h2 class="section-title">Global Map Analysis</h2>
+            
+            <div class="map-container">
+                <!-- Google Earth Engine Map Container -->
+                <div id="earth-engine-map" class="map-placeholder" style="height: 500px; position: relative;">
+                    <div id="map-loader" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1000;">
+                        <div class="map-icon">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <h3>Loading Google Earth Engine</h3>
+                        <p>Initializing satellite data...</p>
+                    </div>
+                </div>
+                
+                <!-- Region Selection Panel -->
+                <div class="region-panel" style="margin: 2rem 0; padding: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 0.75rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Quick Access Regions</h4>
+                    <div class="region-buttons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <button class="region-btn btn btn-outline" data-region="delhi" data-coords="28.6139,77.2090">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Delhi Region
+                        </button>
+                        <button class="region-btn btn btn-outline" data-region="mumbai" data-coords="19.0760,72.8777">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Mumbai Region
+                        </button>
+                        <button class="region-btn btn btn-outline" data-region="bangalore" data-coords="12.9716,77.5946">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Bangalore Region
+                        </button>
+                        <button class="region-btn btn btn-outline" data-region="kolkata" data-coords="22.5726,88.3639">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Kolkata Region
+                        </button>
+                    </div>
+                </div>
+                <button id="analyze-region" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    <i class="fas fa-chart-line"></i>
+                    Analyze Development Changes
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Analysis Section with Integrated Change Detection -->
+    <section id="image-analysis" class="section section-alt">
+        <div class="section-bg" style="
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+        "></div>
+        <div class="container">
+            <h2 class="section-title">Image Change Detection</h2>
+            
+            <div class="image-analysis-container">
+                <!-- Image Upload Section -->
+                <div class="image-upload-grid">
+                    <!-- Before Image Upload -->
+                    <div class="upload-area" id="uploadArea1" onclick="document.getElementById('image1').click()">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="canvas-container">
+                            <canvas id="preview1"></canvas>
+                        </div>
+                        <input type="file" id="image1" class="file-input" accept=".png,.jpg,.jpeg">
+                        <label for="image1" class="upload-label">
+                            <i class="fas fa-upload"></i> Upload Before Image
+                        </label>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.875rem;">
+                            PNG, JPG, JPEG up to 10MB
+                        </p>
+                    </div>
+
+                    <!-- After Image Upload -->
+                    <div class="upload-area" id="uploadArea2" onclick="document.getElementById('image2').click()">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="canvas-container">
+                            <canvas id="preview2"></canvas>
+                        </div>
+                        <input type="file" id="image2" class="file-input" accept=".png,.jpg,.jpeg">
+                        <label for="image2" class="upload-label">
+                            <i class="fas fa-upload"></i> Upload After Image
+                        </label>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.875rem;">
+                            PNG, JPG, JPEG up to 10MB
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button id="detectBtn" class="btn btn-primary" style="width: 100%; padding: 1.2rem; font-size: 1.1rem; margin-top: 2rem;">
+                    <i class="fas fa-magic"></i>
+                    Detect Changes & Generate Report
+                </button>
+
+                <!-- Results Section -->
+                <div id="resultsSection" style="display: none; margin-top: 3rem;">
+                    <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-primary);">Detection Results</h3>
+                    
+                    <!-- Change Mask Display -->
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Change Detection Mask</h4>
+                        <div class="canvas-container" style="max-width: 600px; margin: 0 auto;">
+                            <canvas id="resultCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="results-container">
+                        <div class="result-card">
+                            <div class="result-title">Change Percentage</div>
+                            <div id="changePercentage" class="result-value">0.00%</div>
+                            <div class="result-label">of area changed</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-title">Confidence Score</div>
+                            <div id="confidenceScore" class="result-value">0%</div>
+                            <div class="result-label">detection accuracy</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-title">Analysis Time</div>
+                            <div id="analysisTime" class="result-value">0.0s</div>
+                            <div class="result-label">processing time</div>
+                        </div>
+                    </div>
+
+                    <!-- Download Button -->
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button id="downloadReport" class="btn btn-outline" style="padding: 1rem 2rem;">
+                            <i class="fas fa-download"></i>
+                            Download Full Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="section">
+        <div class="container">
+            <div class="blog-header">
+                <h2 class="section-title">Latest Insights</h2>
+                <a href="#" class="blog-link">
+                    View All Articles <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="blog-grid">
+                <div class="blog-main">
+                    <!-- Featured Article -->
+                    <div class="blog-card blog-card-large">
+                        <div>
+                            <div class="blog-date">September 5, 2023</div>
+                            <h3 class="blog-title">Monitoring Urban Expansion in Developing Cities</h3>
+                            <p class="blog-excerpt">
+                                How our platform helped track informal settlement growth and urban development patterns across Southeast Asian megacities.
+                            </p>
+                            <a href="#" class="blog-link">
+                                Read Case Study <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div style="background: rgba(59, 130, 246, 0.1); border-radius: 0.5rem; height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-city" style="font-size: 3rem; color: var(--accent-blue);"></i>
+                        </div>
+                    </div>
+
+                    <!-- Article 1 -->
+                    <div class="blog-card">
+                        <div class="blog-date">August 22, 2023</div>
+                        <h4 class="blog-title">Advancements in AI for Change Detection</h4>
+                        <p class="blog-excerpt">
+                            Exploring how transformer architectures are improving accuracy in remote sensing and satellite imagery analysis.
+                        </p>
+                        <a href="#" class="blog-link">
+                            Read More <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Article 2 -->
+                    <div class="blog-card">
+                        <div class="blog-date">August 15, 2023</div>
+                        <h4 class="blog-title">Tracking Infrastructure Development</h4>
+                        <p class="blog-excerpt">
+                            Case study on monitoring road construction and infrastructure development in remote regions using satellite data.
+                        </p>
+                        <a href="#" class="blog-link">
+                            Read More <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="blog-sidebar">
+                    <div class="blog-card">
+                        <h5 class="sidebar-title">Popular Topics</h5>
+                        <ul class="feature-list">
+                            <li>Urban Development</li>
+                            <li>Change Detection</li>
+                            <li>Satellite Imagery</li>
+                            <li>AI Algorithms</li>
+                            <li>Environmental Monitoring</li>
+                        </ul>
+                    </div>
+
+                    <div class="blog-card">
+                        <h5 class="sidebar-title">Newsletter</h5>
+                        <p class="blog-excerpt" style="font-size: 0.875rem;">
+                            Stay updated with the latest in satellite intelligence.
+                        </p>
+                        <input type="email" placeholder="Enter your email" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 0.5rem; color: var(--text-primary); margin-bottom: 1rem;">
+                        <button class="btn btn-primary" style="width: 100%;">
+                            Subscribe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <h4>Email Us</h4>
+                            <p>contact@geoscanai.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <h4>Call Us</h4>
+                            <p>1800 1212 88800</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h4>Visit Us</h4>
+                            <p>CHANDIGARH UNIVERSITY D2 402 CABIN NO: 2</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <h4>Business Hours</h4>
+                            <p>Monday - Friday: 9:00 AM - 6:00 PM PST</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-input" placeholder="Enter subject">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-textarea" placeholder="Enter your message"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-large">
+                        Send Message
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo" style="font-size: 1.75rem; margin-bottom: 1rem;">GeoScan AI</div>
+                    <p class="footer-description">
+                        Advanced change detection platform for monitoring global development using satellite imagery and DSM data.
+                    </p>
+                </div>
+
+                <div>
+                    <h6 class="footer-heading">Platform</h6>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#technology">Technology</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#api">API</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h6 class="footer-heading">Company</h6>
+                    <ul class="footer-links">
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#blog">Blog</a></li>
+                        <li><a href="#careers">Careers</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h6 class="footer-heading">Legal</h6>
+                    <ul class="footer-links">
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                        <li><a href="#data">Data Processing</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>©️ 2026 GeoScan AI. All rights reserved.</div>
+                <div>
+                    <a href="#" style="color: var(--text-tertiary); margin-left: 1rem;"><i class="fab fa-twitter"></i></a>
+                    <a href="#" style="color: var(--text-tertiary); margin-left: 1rem;"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" style="color: var(--text-tertiary); margin-left: 1rem;"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Google Earth Engine Integration
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Google Earth Engine
+    initializeEarthEngine();
+    
+    // Region buttons functionality
+    initializeRegionButtons();
+    
+    // Analysis button functionality
+    initializeAnalysisButton();
+});
+
+function initializeEarthEngine() {
+    const mapContainer = document.getElementById('earth-engine-map');
+    const loader = document.getElementById('map-loader');
+    
+    // Simulate Google Earth Engine initialization
+    setTimeout(() => {
+        loader.style.display = 'none';
+        
+        // Create a simple leaflet map as placeholder (replace with actual GEE)
+        const map = L.map('earth-engine-map').setView([28.6139, 77.2090], 10);
+        
+        // Add satellite tile layer (similar to Google Earth)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Add Delhi region marker
+        const delhiMarker = L.marker([28.6139, 77.2090]).addTo(map)
+            .bindPopup(`
+                <div style="text-align: center;">
+                    <h4>Delhi Region</h4>
+                    <p>Development Analysis Available</p>
+                    <button onclick="redirectToModel('delhi')" class="btn btn-primary" style="margin-top: 0.5rem;">
+                        Analyze This Region
+                    </button>
+                </div>
+            `);
+        
+        // Add click event to map for pinpointing
+        map.on('click', function(e) {
+            const popup = L.popup()
+                .setLatLng(e.latlng)
+                .setContent(`
+                    <div style="text-align: center;">
+                        <h4>Selected Location</h4>
+                        <p>Lat: ${e.latlng.lat.toFixed(4)}</p>
+                        <p>Lng: ${e.latlng.lng.toFixed(4)}</p>
+                        <button onclick="redirectToModel('custom', ${e.latlng.lat}, ${e.latlng.lng})" class="btn btn-primary" style="margin-top: 0.5rem;">
+                            Analyze This Location
+                        </button>
+                    </div>
+                `)
+                .openOn(map);
+        });
+        
+        // Store map instance for later use
+        window.earthEngineMap = map;
+        
+    }, 2000); // Simulate loading time
+}
+
+function initializeRegionButtons() {
+    const regionButtons = document.querySelectorAll('.region-btn');
+    
+    regionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const region = this.getAttribute('data-region');
+            const coords = this.getAttribute('data-coords').split(',').map(Number);
+            
+            // Fly to the region on the map
+            if (window.earthEngineMap) {
+                window.earthEngineMap.flyTo(coords, 10);
+                
+                // Show region info popup
+                const popup = L.popup()
+                    .setLatLng(coords)
+                    .setContent(`
+                        <div style="text-align: center;">
+                            <h4>${region.charAt(0).toUpperCase() + region.slice(1)} Region</h4>
+                            <p>Development Analysis Available</p>
+                            <button onclick="redirectToModel('${region}')" class="btn btn-primary" style="margin-top: 0.5rem;">
+                                Analyze This Region
+                            </button>
+                        </div>
+                    `)
+                    .openOn(window.earthEngineMap);
+            }
+        });
+    });
+}
+
+function initializeAnalysisButton() {
+    const analyzeBtn = document.getElementById('analyze-region');
+    
+    analyzeBtn.addEventListener('click', function() {
+        if (window.earthEngineMap) {
+            const center = window.earthEngineMap.getCenter();
+            redirectToModel('current', center.lat, center.lng);
+        }
+    });
+}
+
+// Redirect to model analysis page
+function redirectToModel(region, lat = null, lng = null) {
+    // Create a loading state
+    const analyzeBtn = document.getElementById('analyze-region');
+    const originalText = analyzeBtn.innerHTML;
+    analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting to Analysis...';
+    analyzeBtn.disabled = true;
+    
+    // Simulate API call and redirect
+    // Redirect to region development page with query params
+    const params = new URLSearchParams({ region: region, lat: lat, lng: lng });
+    window.location.href = `region-development.html?${params.toString()}`;
+}
+
+// Add Leaflet CSS and JS (include these in your head)
+const leafletCSS = document.createElement('link');
+leafletCSS.rel = 'stylesheet';
+leafletCSS.href = 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css';
+document.head.appendChild(leafletCSS);
+
+const leafletJS = document.createElement('script');
+leafletJS.src = 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js';
+document.head.appendChild(leafletJS);
+
+        // Change Detector Class (Integrated from your script)
+        class ChangeDetector {
+            constructor() {
+                this.image1 = null;
+                this.image2 = null;
+                this.startTime = null;
+                this.initializeEventListeners();
+            }
+            
+            initializeEventListeners() {
+                document.getElementById('image1').addEventListener('change', (e) => {
+                    this.loadImage(e.target.files[0], 'preview1').then(img => {
+                        this.image1 = img;
+                        this.updateUploadArea(1, true);
+                    });
+                });
+                
+                document.getElementById('image2').addEventListener('change', (e) => {
+                    this.loadImage(e.target.files[0], 'preview2').then(img => {
+                        this.image2 = img;
+                        this.updateUploadArea(2, true);
+                    });
+                });
+                
+                document.getElementById('detectBtn').addEventListener('click', () => {
+                    this.detectChanges();
+                });
+                
+                // Drag and drop functionality
+                this.setupDragAndDrop();
+            }
+            
+            setupDragAndDrop() {
+                const uploadAreas = [document.getElementById('uploadArea1'), document.getElementById('uploadArea2')];
+                
+                uploadAreas.forEach((area, index) => {
+                    area.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        area.classList.add('dragover');
+                    });
+                    
+                    area.addEventListener('dragleave', (e) => {
+                        e.preventDefault();
+                        area.classList.remove('dragover');
+                    });
+                    
+                    area.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        area.classList.remove('dragover');
+                        
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            const fileInput = document.getElementById(`image${index + 1}`);
+                            fileInput.files = files;
+                            
+                            const event = new Event('change');
+                            fileInput.dispatchEvent(event);
+                        }
+                    });
+                });
+            }
+            
+            async loadImage(file, canvasId) {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    const canvas = document.getElementById(canvasId);
+                    const ctx = canvas.getContext('2d');
+                    
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            // Scale image to fit canvas while maintaining aspect ratio
+                            const maxWidth = canvas.parentElement.clientWidth;
+                            const maxHeight = canvas.parentElement.clientHeight;
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            if (width > maxWidth) {
+                                height = (maxWidth / width) * height;
+                                width = maxWidth;
+                            }
+                            
+                            if (height > maxHeight) {
+                                width = (maxHeight / height) * width;
+                                height = maxHeight;
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            resolve(img);
+                        }
+                        img.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            updateUploadArea(areaNumber, hasImage) {
+                const area = document.getElementById(`uploadArea${areaNumber}`);
+                const icon = area.querySelector('.upload-icon i');
+                
+                if (hasImage) {
+                    icon.className = 'fas fa-check-circle';
+                    icon.style.color = '#10b981';
+                } else {
+                    icon.className = 'fas fa-cloud-upload-alt';
+                    icon.style.color = '';
+                }
+            }
+            
+            async detectChanges() {
+                if (!this.image1 || !this.image2) {
+                    alert('Please upload both images before proceeding.');
+                    return;
+                }
+                
+                // Show loading state
+                const detectBtn = document.getElementById('detectBtn');
+                const originalText = detectBtn.innerHTML;
+                detectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Images...';
+                detectBtn.disabled = true;
+                
+                // Start timer
+                this.startTime = Date.now();
+                
+                try {
+                    // Convert images to base64
+                    const image1Base64 = this.canvasToBase64('preview1');
+                    const image2Base64 = this.canvasToBase64('preview2');
+                    
+                    // Call your backend API
+                    const response = await fetch('http://localhost:5000/detect-changes', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            image1: image1Base64,
+                            image2: image2Base64
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    // Calculate analysis time
+                    const endTime = Date.now();
+                    const analysisTime = ((endTime - this.startTime) / 1000).toFixed(2);
+                    
+                    if (result.success) {
+                        this.displayResults(result, analysisTime);
+                    } else {
+                        alert('Error: ' + result.error);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error detecting changes. Please try again.');
+                    
+                    // Simulate results for demo (remove in production)
+                    this.displayDemoResults();
+                } finally {
+                    // Reset button
+                    detectBtn.innerHTML = originalText;
+                    detectBtn.disabled = false;
+                }
+            }
+            
+            canvasToBase64(canvasId) {
+                const canvas = document.getElementById(canvasId);
+                return canvas.toDataURL('image/png').split(',')[1]; // Remove data URL prefix
+            }
+            
+            displayResults(result, analysisTime) {
+                // Show results section
+                const resultsSection = document.getElementById('resultsSection');
+                resultsSection.style.display = 'block';
+                
+                // Scroll to results
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Display change percentage
+                const changePercentage = (result.change_percentage * 100).toFixed(2);
+                document.getElementById('changePercentage').textContent = `${changePercentage}%`;
+                
+                // Display confidence score
+                const confidenceScore = Math.min(100, Math.round(100 - (changePercentage / 2)));
+                document.getElementById('confidenceScore').textContent = `${confidenceScore}%`;
+                
+                // Display analysis time
+                document.getElementById('analysisTime').textContent = `${analysisTime}s`;
+                
+                // Display change mask
+                const resultCanvas = document.getElementById('resultCanvas');
+                const ctx = resultCanvas.getContext('2d');
+                
+                const img = new Image();
+                img.onload = function() {
+                    resultCanvas.width = img.width;
+                    resultCanvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                }
+                img.src = 'data:image/png;base64,' + result.change_mask;
+                
+                // Setup download button
+                this.setupDownloadButton(resultCanvas);
+            }
+            
+            displayDemoResults() {
+                // Demo results for testing
+                const resultsSection = document.getElementById('resultsSection');
+                resultsSection.style.display = 'block';
+                
+                const changePercentage = (Math.random() * 50).toFixed(2);
+                document.getElementById('changePercentage').textContent = `${changePercentage}%`;
+                
+                const confidenceScore = Math.min(100, Math.round(100 - (changePercentage / 2)));
+                document.getElementById('confidenceScore').textContent = `${confidenceScore}%`;
+                
+                const analysisTime = ((Date.now() - this.startTime) / 1000).toFixed(2);
+                document.getElementById('analysisTime').textContent = `${analysisTime}s`;
+                
+                // Create demo change mask
+                const resultCanvas = document.getElementById('resultCanvas');
+                const ctx = resultCanvas.getContext('2d');
+                
+                // Use first image as base
+                const baseCanvas = document.getElementById('preview1');
+                resultCanvas.width = baseCanvas.width;
+                resultCanvas.height = baseCanvas.height;
+                
+                // Draw base image
+                ctx.drawImage(baseCanvas, 0, 0);
+                
+                // Add random change areas
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                for (let i = 0; i < 5; i++) {
+                    const x = Math.random() * resultCanvas.width;
+                    const y = Math.random() * resultCanvas.height;
+                    const size = 20 + Math.random() * 50;
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Setup download button
+                this.setupDownloadButton(resultCanvas);
+            }
+            
+            setupDownloadButton(canvas) {
+                document.getElementById('downloadReport').addEventListener('click', () => {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.download = `change-detection-report-${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    // Show success message
+                    const originalText = this.downloadReport.innerHTML;
+                    this.downloadReport.innerHTML = '<i class="fas fa-check"></i> Report Downloaded!';
+                    setTimeout(() => {
+                        this.downloadReport.innerHTML = originalText;
+                    }, 2000);
+                });
+            }
+        }
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Change Detector
+    new ChangeDetector();
+    
+    // Simple animations
+    // Animate globe points
+    gsap.to('.globe-point', {
+        scale: 1.5,
+        opacity: 0.7,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.5
+    });
+
+    // Animate data points
+    gsap.to('.data-point', {
+        y: -10,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.5
+    });
+
+    // Animate hero elements on load
+    gsap.from('.hero-badge', { duration: 1, y: 50, opacity: 0 });
+    gsap.from('.hero-title', { duration: 1.2, y: 80, opacity: 0, delay: 0.2 });
+    gsap.from('.hero-subtitle', { duration: 1, y: 40, opacity: 0, delay: 0.4 });
+    gsap.from('.cta-btn', { duration: 0.8, y: 30, opacity: 0, stagger: 0.2, delay: 0.6 });
+    gsap.from('.stat-item', { duration: 0.8, y: 20, opacity: 0, stagger: 0.1, delay: 0.8 });
+    gsap.from('.globe', { duration: 1.5, scale: 0, rotation: 180, opacity: 0, delay: 0.5 });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Animate feature cards on scroll
+    gsap.utils.toArray('.feature-card').forEach((card, index) => {
+        gsap.from(card, {
+            scrollTrigger: {
+                trigger: card,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse"
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            delay: index * 0.1,
+            ease: "power2.out"
+        });
+    });
+
+    // Animate section titles on scroll (FIXED)
+    gsap.utils.toArray('.section-title').forEach(title => {
+        gsap.from(title, {
+            scrollTrigger: {
+                trigger: title,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out"
+        });
+    });
+});
+    </script>
+</body>
+</html>

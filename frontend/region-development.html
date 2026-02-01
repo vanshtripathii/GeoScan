@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Region Development — GeoScan</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: Inter, Arial, sans-serif; background: #000; color: #fff; margin: 0; padding: 2rem; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem }
+    .btn { padding: .6rem 1rem; border-radius: .4rem; cursor:pointer; border:none }
+    .btn-primary { background:#3b82f6; color:#fff }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-top:1rem }
+    .card { background: rgba(255,255,255,0.03); padding:1rem; border-radius:.6rem; }
+    .canvas { width:100%; height:400px; background:#111; display:flex; align-items:center; justify-content:center }
+    img.sample { max-width:100%; max-height:100%; object-fit:contain }
+    .stats { display:flex; gap:1rem; margin-top:1rem }
+    .stat { background: rgba(255,255,255,0.02); padding:.8rem 1rem; border-radius:.5rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 id="regionTitle">Region Development</h1>
+      <div>
+        <button id="backBtn" class="btn">← Back</button>
+        <button id="reAnalyze" class="btn btn-primary">Re-run Analysis</button>
+      </div>
+    </div>
+
+    <div id="regionInfo" class="card">
+      <strong>Region:</strong> <span id="regionName">-</span>
+      <div style="margin-top:.5rem; color:#aaa;">Using dataset images from the `datasets` folder for this region.</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Before (A)</h3>
+        <div class="canvas" id="beforeContainer"><img id="imgBefore" class="sample" src="" alt="Before"></div>
+      </div>
+      <div class="card">
+        <h3>After (B)</h3>
+        <div class="canvas" id="afterContainer"><img id="imgAfter" class="sample" src="" alt="After"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem" class="card">
+      <h3>Change Mask</h3>
+      <div class="canvas"><canvas id="maskCanvas"></canvas></div>
+      <div class="stats">
+        <div class="stat">Change Percentage: <span id="changePct">-</span></div>
+        <div class="stat">Confidence: <span id="confScore">-</span></div>
+        <div class="stat">Time: <span id="timeTaken">-</span></div>
+      </div>
+      <div style="margin-top:1rem">
+        <button id="downloadMask" class="btn">Download Mask</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Map region -> dataset file names. Adjust as needed.
+    const REGION_MAP = {
+      'delhi': { before: '../datasets/images/A/2014.png', after: '../datasets/images/B/2024.png' },
+      'mumbai': { before: '../datasets/images/A/2014.png', after: '../datasets/images/B/2024.png' }
+    };
+
+    function q(name) { return new URLSearchParams(window.location.search).get(name); }
+
+    const regionParam = (q('region') || 'delhi').toLowerCase();
+    document.getElementById('regionName').textContent = regionParam.charAt(0).toUpperCase() + regionParam.slice(1);
+    document.getElementById('regionTitle').textContent = `${regionParam.charAt(0).toUpperCase()+regionParam.slice(1)} — Development Analysis`;
+
+    const beforeImg = document.getElementById('imgBefore');
+    const afterImg = document.getElementById('imgAfter');
+    const maskCanvas = document.getElementById('maskCanvas');
+    const changePct = document.getElementById('changePct');
+    const confScore = document.getElementById('confScore');
+    const timeTaken = document.getElementById('timeTaken');
+
+    const mapping = REGION_MAP[regionParam] || REGION_MAP['delhi'];
+
+    // Load sample images (served by static frontend server)
+    beforeImg.src = mapping.before;
+    afterImg.src = mapping.after;
+
+    async function fetchImageAsBase64(url) {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function runAnalysis() {
+      const start = Date.now();
+      try {
+        const resp = await fetch(`http://localhost:5000/region-analysis?region=${encodeURIComponent(regionParam)}`);
+        const j = await resp.json();
+        const took = ((Date.now() - start)/1000).toFixed(2) + 's';
+
+        if (j.success) {
+          changePct.textContent = (j.change_percentage*100).toFixed(2) + '%';
+          confScore.textContent = Math.min(100, Math.round(100 - ((j.change_percentage*100)/2))) + '%';
+          timeTaken.textContent = took;
+
+          // If backend returned before/after paths, use them to set image src (relative to repo root via server)
+          if (j.before_path) { beforeImg.src = '/' + j.before_path; }
+          if (j.after_path) { afterImg.src = '/' + j.after_path; }
+
+          // Draw mask
+          const img = new Image();
+          img.onload = () => {
+            maskCanvas.width = img.width; maskCanvas.height = img.height;
+            const ctx = maskCanvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+          };
+          img.src = 'data:image/png;base64,' + j.change_mask;
+        } else {
+          alert('Analysis failed: ' + (j.error || 'unknown'));
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Failed to run analysis. Ensure backend is running at http://localhost:5000');
+      }
+    }
+
+    document.getElementById('backBtn').addEventListener('click', () => { window.location.href = 'index.html'; });
+    document.getElementById('reAnalyze').addEventListener('click', runAnalysis);
+    document.getElementById('downloadMask').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = `${regionParam}-change-mask.png`;
+      link.href = maskCanvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // Run analysis once page loads
+    window.addEventListener('load', () => {
+      // Wait for images to load visually before running analysis
+      Promise.all([
+        new Promise(r => beforeImg.onload = r),
+        new Promise(r => afterImg.onload = r)
+      ]).then(runAnalysis).catch(runAnalysis);
+    });
+  </script>
+</body>
+</html>
