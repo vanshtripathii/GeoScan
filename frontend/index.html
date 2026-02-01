@@ -1936,7 +1936,7 @@ document.head.appendChild(leafletJS);
                     const image2Base64 = this.canvasToBase64('preview2');
                     
                     // Call your backend API
-                    const response = await fetch('http://localhost:5000/detect-changes', {
+                    const response = await fetch('https://geo-scan-lake.vercel.app/detect-changes', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
