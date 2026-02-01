@@ -98,7 +98,7 @@
     async function runAnalysis() {
       const start = Date.now();
       try {
-        const resp = await fetch(`https://geo-scan-lake.vercel.app/region-analysis?region=${encodeURIComponent(regionParam)}`);
+        const resp = await fetch(`https://geoscan-4do5.onrender.com/region-analysis?region=${encodeURIComponent(regionParam)}`);
         const j = await resp.json();
         const took = ((Date.now() - start)/1000).toFixed(2) + 's';
 
@@ -124,7 +124,7 @@
         }
       } catch (e) {
         console.error(e);
-        alert('Failed to run analysis. Ensure backend is running at https://geo-scan-lake.vercel.app/');
+        alert('Failed to run analysis. Ensure backend is running at https://geoscan-4do5.onrender.com');
       }
     }
 
