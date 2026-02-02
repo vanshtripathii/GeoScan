@@ -211,7 +211,7 @@ def encode_image_to_base64(image_array):
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
-import os
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
